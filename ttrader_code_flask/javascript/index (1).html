@@ -1,0 +1,37 @@
+
+<body>
+    <button id="deposit50">Deposit $50</button>
+    <button id="getbalance">Get Balance</button>
+</body>
+
+<script>
+const api_key = "55f9454d84d7f78"
+const url = "http://127.0.0.1:5000"
+
+function alertBalance(e) {
+    e.preventDefault()
+    const promise = fetch(`${url}/api/${api_key}/balance`)
+    promise.then(blob=>blob.json()).then(json=>{
+        alert(`Your balance is ${json.balance}`)
+    })
+}
+
+function depositFifty(e) {
+    e.preventDefault()
+    const promise = fetch(`${url}/api/${api_key}/deposit`,
+    {
+        method: 'put',
+        mode: 'cors',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(
+            { amount: 50.00 })
+    })
+    promise.then(blob=>blob.json()).then(json=>{
+        alert(`New balance for $${json.username}: $${json.balance}`)
+    })
+}
+
+document.getElementById("getbalance").addEventListener('click', alertBalance)
+document.getElementById("deposit50").addEventListener('click', depositFifty)
+
+</script>
