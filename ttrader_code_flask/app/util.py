@@ -32,6 +32,6 @@ def get_ten_stocks(criteria):
 def stock_info(symbol):
     response = requests.get(ENDPOINT + "/stock/{}/previous".format(symbol))
     if response.status_code == 200:
-        return response.json() #?
+        return response.json()
     else:
         return None

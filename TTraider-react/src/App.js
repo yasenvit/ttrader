@@ -1,22 +1,30 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-//import './App.css';
-import './Nav.css';
 import {BrowserRouter, Route} from 'react-router-dom';
-import Home from './components/Home';
-import login from './util/login';
-import Login from './components/Login';
-import Logout from './components/Logout';
-import Sell from './components/Sell';
-import Buy from './components/Buy';
-import UserName from './components/UserName';
-import Trades from './components/Trades';
-import Deposit from './components/Deposit';
-import Positions from './components/Positions';
+import image from './mancity.jpg';
+import './Nav.css';
 import isloggedin from './util/isloggedin';
 import logout from './util/logout';
 import Nav from './components/Nav';
-import image from './mancity.jpg';
+import Login from './components/Login';
+import Logout from './components/Logout';
+import Home from './components/Home';
+import Balance from './components/Balance';
+import Deposit from './components/Deposit';
+import Trades from './components/Trades';
+import TradesFor from './components/TradesFor';
+import Buy from './components/Buy';
+import Sell from './components/Sell';
+import Positions from './components/Positions';
+import PositionFor from './components/PositionFor';
+import TickerLookup from './components/TickerLookup';
+import Mostactive from './components/Mostactive';
+import Gainers from './components/Gainers';
+import Losers from './components/Losers';
+import Iexvolume from './components/Iexvolume';
+import Iexpercent from './components/Iexpercent';
+import Infocus from './components/Infocus';
+
+
 import apiCall from './util/apiCall';
 
 class App extends Component {
@@ -32,7 +40,7 @@ class App extends Component {
     })
     promise.then(blob=>blob.json()).then(json=>{
 
-        console.log(json)
+        
       if (json.api_key !== undefined) {
         window.sessionStorage.setItem("apikey", json.api_key)
         window.sessionStorage.setItem("username", json.username)
@@ -50,7 +58,6 @@ class App extends Component {
     })
   }
 
-
   logoutClick=(event)=>{
     event.preventDefault()
     logout()
@@ -58,24 +65,31 @@ class App extends Component {
   }
   render() {
     let routelist=[]
-    let getHome=[]
-    let getGreetings=[]
-    let getLogin=[]
-    let getLogout=[]
+    let onHead=[]
+    let LoginLogout=[]
     let mainroutelist=[]
     let nav=[]
     if (isloggedin()){
       routelist= [
-        <Route exact path="/deposit" component={Deposit}/>, 
-        <Route exact path="/UserName" component={UserName}/>,
-        <Route exact path="/Trades" component={Trades}/>,
-        <Route exact path="/Sell" component={Sell}/>,
-        <Route exact path="/Positions" component={Positions}/>,
-        <Route exact path="/Buy" component={Buy}/>,             
-        <Route exact path="/" render={(props)=><Logout {...props} clicked={this.logoutClick}/>}/>
+        <Route exact path="/" component={Home}/>,
+        <Route exact path="/balance" component={Balance}/>,
+        <Route exact path="/deposit" component={Deposit}/>,        
+        <Route exact path="/trades" component={Trades}/>,
+        <Route exact path="/trades_for" component={TradesFor}/>,
+        <Route exact path="/buy" component={Buy}/>,
+        <Route exact path="/sell" component={Sell}/>,
+        <Route exact path="/positions" component={Positions}/>,
+        <Route exact path="/position_for" component={PositionFor}/>,
+        <Route exact path="/stock" component={TickerLookup}/>,
+        <Route exact path="/mostactive" component={Mostactive}/>, 
+        <Route exact path="/gainers" component={Gainers}/>, 
+        <Route exact path="/losers" component={Losers}/>,
+        <Route exact path="/iexvolume" component={Iexvolume}/>,
+        <Route exact path="/iexpercent" component={Iexpercent}/>,  
+        <Route exact path="/infocus" component={Infocus}/>, 
         ]
-      getHome= [<Route exact path="/" component={Home}/>]
-      getLogout= [<Route exact path="/" render={(props)=><Logout {...props} clicked={this.logoutClick}/>}/>]        
+      onHead= [<Route exact path="/" component={Home}/>]
+      LoginLogout= [<Route exact path="/" render={(props)=><Logout {...props} clicked={this.logoutClick}/>}/>]        
       mainroutelist=[
         <div className="row">
           <div className="columnL">
@@ -87,11 +101,10 @@ class App extends Component {
             <div className="outp">
             {routelist}
             </div>            
-              </div>}   
+              </div>   
               </div>]
     } else {
-        getLogin=[<Route path="/" render={(props)=><Login {...props} loginfunc={this.login} />} />]
-        getGreetings=[<h2>Welcome to React Terminal trader</h2>]
+        LoginLogout=[<Route path="/" render={(props)=><Login {...props} loginfunc={this.login} />} />]
         mainroutelist= [
           <div className="row">
             <div className="column">
@@ -108,18 +121,16 @@ class App extends Component {
           </div>
           <div className="column">
             <div className="hello">
-              {getHome}
-              {getGreetings}
+              <h5>Welcome to React Terminal trader</h5>
             </div>
           </div>
           <div className="column">
             <div className="log">
-              {getLogin}
-              {getLogout}
+              {LoginLogout}
             </div>
           </div>  
         </div>
-        <div className="row">
+        <div className="wrapper">
           {mainroutelist}
         </div>
       </div>

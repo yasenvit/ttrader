@@ -22,12 +22,20 @@ def root():
     return jsonify({'name':'API Trader'})
 
 @app.route('/api/price/<ticker>')
-def privce(ticker):
+def price(ticker):
     try:
         price  = util.get_price(ticker)
     except ConnectionError:
         return  jsonify(NOT_FOUND), 404
     return jsonify({'ticker': ticker, 'price':price})
+
+@app.route('/api/stock/<ticker>')
+def stock_info(ticker):
+    try:
+        info  = util.stock_info(ticker)
+    except ConnectionError:
+        return  jsonify(NOT_FOUND), 404
+    return jsonify(info)
 
 @app.route('/api/<api_key>/balance')
 def balance(api_key):
@@ -47,15 +55,16 @@ def positions(api_key):
 
 @app.route('/api/<api_key>/deposit', methods=['PUT'])
 def deposit(api_key):
+    
     if not request.json or 'amount' not in request.json:
         return jsonify(BAD_REQUEST), 400
     account = Account.api_authenticate(api_key)
     if not account:
         return jsonify(UNATHORIZED), 401
     amount = request.json["amount"]
-    if not isinstance(amount, float) or amount < 0:
-        return jsonify(BAD_REQUEST), 400
-    account.deposit(amount)
+    # if not isinstance(amount, float) or amount < 0:
+       # return jsonify(BAD_REQUEST), 400
+    account.deposit(float(amount))
     account.save()
     return jsonify({'username':account.username, 'balance':round(account.balance,2)})
 
@@ -68,7 +77,7 @@ def position_for(api_key,symbol):
         return jsonify(UNATHORIZED), 401
     position = acc.get_position_for(symbol.upper())
     acc.save()
-    return jsonify({'username': acc.username, 'position' : position.json() })
+    return jsonify({'username': acc.username, 'ticker' : position.ticker, 'shares': position.shares })
 
 @app.route('/api/<api_key>/trades')
 def trades(api_key):
@@ -96,15 +105,15 @@ def buy(api_key):
     if not acc:
         return jsonify(UNATHORIZED), 401
     ticker = request.json["ticker"]
-    amount = request.json["amount"]
-    if not isinstance(amount, int) or amount < 0:
+    amount = int(request.json["amount"])
+    if amount < 0:
         return jsonify(BAD_REQUEST), 400
     try:
-        acc.buy(ticker, amount)
+        acc.buy(ticker, int(amount))
     except ValueError:
         return  jsonify(BAD_REQUEST), 404
     position = acc.get_position_for(ticker)
-    return jsonify({"username" : acc.username, "balance" : round(acc.balance,2), "position" : position.json(),\
+    return jsonify({"username" : acc.username, "balance" : round(acc.balance,2), "ticker" : position.ticker,"shares":position.shares,\
          "position cost": round(position.shares*util.get_price(ticker),2)})
 
 
@@ -116,14 +125,16 @@ def sell(api_key):
     if not acc:
         return jsonify(UNATHORIZED), 401
     ticker = request.json["ticker"]
-    amount = request.json["amount"]
+    amount = int(request.json["amount"])
     position = acc.get_position_for(ticker)
-    if not isinstance(amount, int) or amount < 0 or amount > position.shares:
+    print(ticker, amount, position)
+    if amount < 0 or amount > position.shares:
         return jsonify(BAD_REQUEST), 400
     acc.sell(ticker, amount)
     position = acc.get_position_for(ticker)
-    return jsonify({"username" : acc.username, "balance" : round(acc.balance,2),"position" : position.json(),\
-         "position cost" : round(position.shares*util.get_price(ticker),2)})
+    print(position.ticker, position.shares)
+    return jsonify({"username" : acc.username, "balance" : round(acc.balance,2),"ticker" : position.ticker,"shares":position.shares,\
+         "position_cost" : round(position.shares*util.get_price(ticker),2)})
     
 @app.route('/api/get_ten/<criteria>')
 def get_ten(criteria):
@@ -136,3 +147,18 @@ def get_ten(criteria):
             return jsonify({i:listten})
     return jsonify(BAD_REQUEST), 400
 
+
+
+@app.route('/api/get_api_key', methods=['POST'])
+def get_api_key():
+    print(request.json)
+    if not request.json or 'username' not in request.json or\
+         'password' not in request.json:
+        return jsonify(BAD_REQUEST), 400
+    account = Account.login(request.json['username'], request.json['password'])
+    if not account:
+        return jsonify(UNATHORIZED), 401
+    return jsonify({
+        'username': account.username,
+        'api_key': account.api_key
+    })

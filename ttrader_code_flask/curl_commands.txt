@@ -1,0 +1,49 @@
+To start Flask:
+
+enter your virtualenv
+
+source venv/bin/activate
+
+export FLASK_DEBUG=1
+
+flask run
+
+To start React:
+
+installation: npx create-react-app name_of_app
+To run: npm start
+
+
+
+
+
+
+Curl Command:
+curl 142.93.4.218:5000
+
+curl 142.93.4.218:5000/api/price/aapl
+
+curl 142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/balance
+
+curl 142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/positions
+
+curl -H "Content-Type: application/json" -X PUT -d '{"amount": 100.0}' http://142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/deposit
+
+curl 142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/position_for/tsla
+
+curl 142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/trades
+
+curl 142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/trades_for/tsla
+
+# buy should return a response with the username, the balance, and the position for that stock
+
+curl -H "Content-Type: application/json" -X POST -d '{"ticker": "tsla", "amount": 1}' http://142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/buy
+
+# sell should return a response with the username, the balance, and the position for that stock
+
+curl -H "Content-Type: application/json" -X POST -d '{"ticker": "tsla", "amount": 1}' http://142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/sell
+
+# call report ten stocks by criteria: /mostactive, /gainers, /losers, /iexvolume, /iexpercent, /infocus :
+
+curl 142.93.4.218:5000/api/get_ten/mostactive
+

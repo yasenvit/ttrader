@@ -101,7 +101,7 @@ def list_ten():
             view.display_price(ticker, report)
         elif answer == "7":
             ticker = view.inpt_ticker().upper()
-            report = util.stock_info(ticker)        #taking infor about stock, requested stock/previous
+            report = util.stock_info(ticker)        #taking info about stock, requested stock/previous
             if report == None:
                 view.invalid_stock(ticker)
                 continue
