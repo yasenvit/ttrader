@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
 import apiCall from '../util/apiCall';
 import TradeItem from '../util/TradeItem';
 
@@ -28,9 +27,11 @@ class Trades extends Component {
         }  
         return (
             <div>
-                <h3>Trades History </h3>
+                <h3 className="title ">Trades History </h3>
                 <div>
+
                     {tradesList}
+
                 </div>
             </div>
         )
@@ -41,5 +42,4 @@ class Trades extends Component {
         }
     }
 }
-
 export default Trades

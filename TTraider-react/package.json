@@ -5,10 +5,12 @@
   "dependencies": {
     "jquery": "^3.4.0",
     "react": "^16.8.6",
+    "react-currency-format": "^1.0.0",
     "react-dom": "^16.8.6",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "2.1.8"
+    "react-scripts": "2.1.8",
+    "round-to": "^4.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
 import apiCall from '../util/apiCall';
 import ListItem from '../util/ListItem'
 
@@ -27,7 +26,9 @@ class Gainers extends Component {
         return (
             <div>
                 <h3>Top-10 Gainers stocks</h3>
-                {gainersList}                
+                
+                    {gainersList}  
+                                            
             </div>
         )
         }    
@@ -37,5 +38,4 @@ class Gainers extends Component {
         }
     }
 }
-
 export default Gainers

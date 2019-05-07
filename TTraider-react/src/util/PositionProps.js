@@ -4,9 +4,14 @@ class PositionProps extends Component {
     
     render() {        
        return (
-           <div style={itemStyle}>
-                <div>Ticker '{this.props.position.ticker}' - {this.props.position.shares} shares</div>
-            </div>
+        <table className="table">
+            <tr>
+                <td width="20%" >Ticker:</td>
+                <td width="20%" >{this.props.position.ticker}</td>
+                <td width="20%" >Shares:</td>
+                <td width="20%" >{this.props.position.shares}</td>
+            </tr>
+        </table>
             )
     } 
 }

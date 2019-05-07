@@ -35,3 +35,10 @@ def stock_info(symbol):
         return response.json()
     else:
         return None
+
+def stock_news(symbol):
+    response = requests.get(ENDPOINT + "/stock/{}/news/last/5".format(symbol))
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None

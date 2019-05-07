@@ -12,5 +12,4 @@ class PositionItem extends Component {
         
     }
 }
-
 export default PositionItem

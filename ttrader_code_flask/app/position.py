@@ -10,6 +10,7 @@ class Position(ORM):
         self.account_pk = None
         self.ticker = None
         self.shares = None
+        
 
     def json(self):
         return {'ticker': self.ticker,'shares': self.shares}

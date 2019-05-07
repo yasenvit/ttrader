@@ -23,8 +23,6 @@ import Losers from './components/Losers';
 import Iexvolume from './components/Iexvolume';
 import Iexpercent from './components/Iexpercent';
 import Infocus from './components/Infocus';
-
-
 import apiCall from './util/apiCall';
 
 class App extends Component {
@@ -32,15 +30,12 @@ class App extends Component {
     refresh:"",
     error:""
   }
-
   login = (username, password) => {
     const promise = apiCall('/api/get_api_key', 'post', {
       username: username,
       password: password
     })
     promise.then(blob=>blob.json()).then(json=>{
-
-        
       if (json.api_key !== undefined) {
         window.sessionStorage.setItem("apikey", json.api_key)
         window.sessionStorage.setItem("username", json.username)
@@ -57,7 +52,6 @@ class App extends Component {
       }
     })
   }
-
   logoutClick=(event)=>{
     event.preventDefault()
     logout()
@@ -65,15 +59,13 @@ class App extends Component {
   }
   render() {
     let routelist=[]
-    let onHead=[]
     let LoginLogout=[]
     let mainroutelist=[]
-    let nav=[]
     if (isloggedin()){
       routelist= [
         <Route exact path="/" component={Home}/>,
         <Route exact path="/balance" component={Balance}/>,
-        <Route exact path="/deposit" component={Deposit}/>,        
+        <Route exact path="/deposit" component={Deposit}/>,
         <Route exact path="/trades" component={Trades}/>,
         <Route exact path="/trades_for" component={TradesFor}/>,
         <Route exact path="/buy" component={Buy}/>,
@@ -88,7 +80,6 @@ class App extends Component {
         <Route exact path="/iexpercent" component={Iexpercent}/>,  
         <Route exact path="/infocus" component={Infocus}/>, 
         ]
-      onHead= [<Route exact path="/" component={Home}/>]
       LoginLogout= [<Route exact path="/" render={(props)=><Logout {...props} clicked={this.logoutClick}/>}/>]        
       mainroutelist=[
         <div className="row">
@@ -96,13 +87,15 @@ class App extends Component {
             <div className="nav">
               <Nav/>
             </div>
+            <div className="nav">
+            </div>
           </div>
           <div className="columnR">
             <div className="outp">
             {routelist}
             </div>            
-              </div>   
-              </div>]
+          </div>   
+        </div>]
     } else {
         LoginLogout=[<Route path="/" render={(props)=><Login {...props} loginfunc={this.login} />} />]
         mainroutelist= [
@@ -116,21 +109,17 @@ class App extends Component {
     return (
       <BrowserRouter>
       <div className='box'>
-        <div className="row">
+        <div className="row-head">
           <div className="column">
-          </div>
-          <div className="column">
-            <div className="hello">
+          </div>          
+          <div className="hello">
               <h5>Welcome to React Terminal trader</h5>
-            </div>
           </div>
           <div className="column">
-            <div className="log">
-              {LoginLogout}
-            </div>
-          </div>  
+           {LoginLogout}
+          </div>
         </div>
-        <div className="wrapper">
+        <div className="row">
           {mainroutelist}
         </div>
       </div>
@@ -138,5 +127,4 @@ class App extends Component {
     );
   }
 }
-
 export default App;

@@ -67,7 +67,29 @@ def log_in():
             view.invalid_opt() 
             continue
 
-def view_balance(user):
+def revenue(user):            # this func for REACT
+    positionslist = user.get_positions()
+    dictList = []
+    for position in positionslist:
+        currentCost = util.get_price(position.ticker) * position.shares
+        investedCost = 0
+        for trade in user.trades_for(position.ticker):
+            investedCost += trade.cost
+        margin = currentCost - investedCost
+        marginPercentage = margin/investedCost*100
+        dictList.append({
+            'ticker': position.ticker,
+            'shares': position.shares,
+            'investCost': investedCost,
+            'currentCost': round(currentCost,4),
+            'margin': margin
+            'marginPercentage': round(marginPercentage,4)
+        })
+    return dictList
+
+
+
+def view_balance(user):                 
     stocklist = user.get_positions()
     _sum = 0
     for stock in stocklist:

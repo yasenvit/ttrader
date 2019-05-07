@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
 import apiCall from '../util/apiCall';
 import ListItem from '../util/ListItem'
-
 
 class Mostactives extends Component {
     state = {
@@ -23,14 +21,14 @@ class Mostactives extends Component {
             mostactivesList = (
                 <div>
                     <ListItem items={this.state.mostactives}/>
-                </div>
-            
-            
+                </div>            
             )}    
         return (
             <div>
                 <h3>Top-10 Most active stocks</h3>
-                {mostactivesList}                
+
+                {mostactivesList}
+                                
             </div>
         )
         }    

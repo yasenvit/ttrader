@@ -1,17 +1,14 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import apiCall from '../util/apiCall';
-
 
 class Nav extends Component {
     render() {
         return (
-
               <ul id="leftNavigation">
                 <li className="active">
                 <Link to="/">Home </Link>
                     <ul>                        
-                        <li><Link to="/balance"> Account cash balance </Link></li>
+                        <li><Link to="/balance"> Balance </Link></li>
                         <li><Link to="/deposit"> Make Deposit </Link></li>
                         <li><Link to="/positions"> Positions </Link></li>
                         <li><Link to="/position_for"> Position for </Link></li>

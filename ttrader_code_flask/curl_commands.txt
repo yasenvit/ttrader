@@ -14,36 +14,33 @@ installation: npx create-react-app name_of_app
 To run: npm start
 
 
-
-
-
-
 Curl Command:
-curl 142.93.4.218:5000
+curl 127.0.0.1:5000
 
-curl 142.93.4.218:5000/api/price/aapl
+curl 127.0.0.1:5000/api/price/aapl
 
-curl 142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/balance
+curl 127.0.0.1:5000/api/JA4JOIVIJBK6WPI/balance
 
-curl 142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/positions
+curl 127.0.0.1:5000/api/JA4JOIVIJBK6WPI/positions
 
-curl -H "Content-Type: application/json" -X PUT -d '{"amount": 100.0}' http://142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/deposit
+curl -H "Content-Type: application/json" -X PUT -d '{"amount": 100.0}' http://127.0.0.1:5000/api/JA4JOIVIJBK6WPI/deposit
 
-curl 142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/position_for/tsla
+curl 127.0.0.1:5000/api/JA4JOIVIJBK6WPI/position_for/tsla
 
-curl 142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/trades
+curl 127.0.0.1:5000/api/JA4JOIVIJBK6WPI/trades
 
-curl 142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/trades_for/tsla
+curl 127.0.0.1:5000/api/JA4JOIVIJBK6WPI/trades_for/tsla
 
 # buy should return a response with the username, the balance, and the position for that stock
 
-curl -H "Content-Type: application/json" -X POST -d '{"ticker": "tsla", "amount": 1}' http://142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/buy
+curl -H "Content-Type: application/json" -X POST -d '{"ticker": "tsla", "amount": 1}' http://127.0.0.1:5000/api/JA4JOIVIJBK6WPI/buy
 
 # sell should return a response with the username, the balance, and the position for that stock
 
-curl -H "Content-Type: application/json" -X POST -d '{"ticker": "tsla", "amount": 1}' http://142.93.4.218:5000/api/A3EKSKI9ZCQMRBP/sell
+curl -H "Content-Type: application/json" -X POST -d '{"ticker": "tsla", "amount": 1}' http://127.0.0.1:5000/api/JA4JOIVIJBK6WPI/sell
 
 # call report ten stocks by criteria: /mostactive, /gainers, /losers, /iexvolume, /iexpercent, /infocus :
 
-curl 142.93.4.218:5000/api/get_ten/mostactive
+curl 127.0.0.1:5000/api/get_ten/mostactive
 
+curl 127.0.0.1:5000/api/JA4JOIVIJBK6WPI/summary

@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
 import apiCall from '../util/apiCall';
 import '../Nav.css';
 
@@ -18,8 +17,7 @@ class PositionFor extends Component {
                 })
               })
     }
-    render() {
-        
+    render() {        
         let positionList=(<div></div>)
         if (this.state.shares !== null) {
             positionList = (
@@ -32,19 +30,19 @@ class PositionFor extends Component {
             <div>
                 <div>
                     <h3>Position for </h3>
-                    <input className="pad" id="ticker" placeholder="ticker"/>
-                    <button onClick = {(event)=> {
+                    <input className="input" id="ticker" placeholder="ticker"/>
+                    <button className="myButton" onClick = {(event)=> {
                         this.getPositionFor(document.getElementById('ticker').value)
                     }}
                     > show </button>
                 </div>
                 <div>
+
                     {positionList}
-                </div>                    
-                               
+
+                </div>                              
             </div>
         )
     }   
 }
-
 export default PositionFor

@@ -45,6 +45,7 @@ def create_db(dbfilename=DBFILENAME):
             ticker VARCHAR(10),
             volume INTEGER,
             price REAL,
+            cost Real,
             time FLOAT,
             FOREIGN KEY(account_pk) REFERENCES account(pk)
         );

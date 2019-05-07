@@ -65,6 +65,7 @@ class Account(ORM):
         trade.ticker = ticker.upper()
         trade.price = price
         trade.volume = amount
+        trade.cost = round(price * - amount)
         trade.time = time.time()
 
         position = self.get_position_for(ticker.upper())
@@ -95,6 +96,7 @@ class Account(ORM):
         trade.ticker = ticker.upper()
         trade.price = price
         trade.volume = -amount
+        trade.cost = price * amount
         trade.time = time.time()
 
         trade.save()
@@ -148,4 +150,33 @@ class Account(ORM):
             return None
         else:
             return account
-    
+        
+    def get_positionsCurrCost(self):
+        positionsList = self.get_positions()
+        _sum = 0
+        for position in positionsList:
+            positionPrice = get_price(position.ticker.upper())
+            _sum = _sum + round(position.shares * positionPrice,2)
+        return _sum
+
+    def summary(self):
+        positionslist = self.get_positions()
+        dictList = []
+        for position in positionslist:
+            currentCost = get_price(position.ticker) * position.shares
+            investCost = 0
+            shares = 0
+            for trade in self.get_trades_for(position.ticker):
+                investCost += trade.cost
+                shares += trade.volume
+            margin = currentCost - abs(investCost)
+            marginPercentage = margin/abs(investCost)*100
+            dictList.append({
+                'ticker': position.ticker,
+                'shares': shares,
+                'investCost': abs(investCost),
+                'currentCost': round(currentCost,4),
+                'margin': margin,
+                'marginPercentage': round(marginPercentage,4)
+            })
+        return dictList

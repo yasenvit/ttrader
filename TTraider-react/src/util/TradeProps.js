@@ -1,22 +1,26 @@
 import React, {Component} from 'react';
+import CurrencyFormat from 'react-currency-format';
+import '../Nav.css'
 
-class TradeProps extends Component {
-    
+class TradeProps extends Component {    
     render() {
-        
-        
-       return (
-           <div style={itemStyle}>
-                <div>Ticker '{this.props.trade.ticker}' / Shares {this.props.trade.shares} / Price {this.props.trade.price} / Transaction
-                 cost $ {this.props.trade.shares*this.props.trade.price}</div>
-            </div>
+        return (
+            <table className="table">
+                <tr>
+                    <th width="14%">Date and time</th>
+                    <th width="7%">Ticker</th>
+                    <th width="10%">Shares</th>
+                    <th width="14%">Price</th>
+                </tr>
+                <tr>
+                    <td width="7%" >{this.props.trade.time}</td>
+                    <td width="7%" >{this.props.trade.ticker}</td>
+                    <td width="10%" >{this.props.trade.shares}</td>
+                    <td width="14%"><CurrencyFormat value={this.props.trade.price} displayType={'text'}
+                     thousandSeparator={true} prefix={'$'}/></td>
+                </tr>
+            </table>
             )
     }
-}
-const itemStyle = {
-    backgroundColor: '#f4f4f4',
-    padding: '10px',
-    borderBottom: '1px #ccc dotted'
-
 }
 export default TradeProps

@@ -37,12 +37,23 @@ def stock_info(ticker):
         return  jsonify(NOT_FOUND), 404
     return jsonify(info)
 
+@app.route('/api/news/<ticker>')
+def stock_news(ticker):
+    try:
+        info  = util.stock_news(ticker)
+    except ConnectionError:
+        return  jsonify(NOT_FOUND), 404
+    return jsonify(info)
+
 @app.route('/api/<api_key>/balance')
 def balance(api_key):
     account = Account.api_authenticate(api_key)
     if not account:
         return jsonify(UNATHORIZED), 401
-    return jsonify({'username':account.username, 'balance':round(account.balance,2)})
+    balance = account.balance
+    psCurCost = account.get_positionsCurrCost()
+    return jsonify({'username':account.username.upper(),'balance': balance, \
+         'positionsCurrentCost': psCurCost})
 
 @app.route('/api/<api_key>/positions')
 def positions(api_key):
@@ -51,7 +62,7 @@ def positions(api_key):
         return jsonify(UNATHORIZED), 401
     positions =account.get_positions()
     json_list = [position.json() for position in positions]
-    return jsonify({'username':account.username, 'positions':json_list})
+    return jsonify({'username':account.username, 'balance': account.balance ,'positions':json_list})
 
 @app.route('/api/<api_key>/deposit', methods=['PUT'])
 def deposit(api_key):
@@ -113,8 +124,8 @@ def buy(api_key):
     except ValueError:
         return  jsonify(BAD_REQUEST), 404
     position = acc.get_position_for(ticker)
-    return jsonify({"username" : acc.username, "balance" : round(acc.balance,2), "ticker" : position.ticker,"shares":position.shares,\
-         "position cost": round(position.shares*util.get_price(ticker),2)})
+    return jsonify({"username" : acc.username, "balance" : acc.balance, "ticker" : position.ticker,"shares":position.shares,\
+         "positionCost": position.shares*util.get_price(ticker)})
 
 
 @app.route('/api/<api_key>/sell', methods = ['POST'])
@@ -127,14 +138,12 @@ def sell(api_key):
     ticker = request.json["ticker"]
     amount = int(request.json["amount"])
     position = acc.get_position_for(ticker)
-    print(ticker, amount, position)
     if amount < 0 or amount > position.shares:
         return jsonify(BAD_REQUEST), 400
     acc.sell(ticker, amount)
     position = acc.get_position_for(ticker)
-    print(position.ticker, position.shares)
-    return jsonify({"username" : acc.username, "balance" : round(acc.balance,2),"ticker" : position.ticker,"shares":position.shares,\
-         "position_cost" : round(position.shares*util.get_price(ticker),2)})
+    return jsonify({"username" : acc.username, "balance" : acc.balance,"ticker" : position.ticker,"shares":position.shares,\
+         "positionCost" : position.shares*util.get_price(ticker)})
     
 @app.route('/api/get_ten/<criteria>')
 def get_ten(criteria):
@@ -146,8 +155,6 @@ def get_ten(criteria):
                 return jsonify(APP_ERROR), 500
             return jsonify({i:listten})
     return jsonify(BAD_REQUEST), 400
-
-
 
 @app.route('/api/get_api_key', methods=['POST'])
 def get_api_key():
@@ -162,3 +169,22 @@ def get_api_key():
         'username': account.username,
         'api_key': account.api_key
     })
+
+@app.route('/api/<api_key>/summary')
+def summary(api_key):
+    account = Account.api_authenticate(api_key)
+    if not account:
+        return jsonify(UNATHORIZED), 401
+    results = account.summary()
+    curCost = 0
+    invCost = 0
+    positions = 0
+    shares = 0
+    for pos in results:
+        curCost += pos['currentCost']
+        invCost += pos['investCost']
+        positions += 1
+        shares += pos['shares'] 
+    return jsonify({'positions':results, 'username': account.username.upper(), 'balance': account.balance,\
+        'positionsQty': positions, 'sharesQty':shares,'invCost': invCost,\
+        'currentCost':curCost, 'margin':curCost-invCost, 'marginPrcntg': (curCost-invCost)/invCost*100 } )

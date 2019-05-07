@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import TradeProps from './TradeProps'
 
+class TradeItem extends Component {  
 
-class TradeItem extends Component {
-   
     render() {
         
        return this.props.trades.map((trade, index)=> (
@@ -12,5 +11,4 @@ class TradeItem extends Component {
         
     }
 }
-
 export default TradeItem
