@@ -158,7 +158,7 @@ def get_ten(criteria):
 
 @app.route('/api/get_api_key', methods=['POST'])
 def get_api_key():
-    print(request.json)
+    
     if not request.json or 'username' not in request.json or\
          'password' not in request.json:
         return jsonify(BAD_REQUEST), 400
@@ -188,3 +188,20 @@ def summary(api_key):
     return jsonify({'positions':results, 'username': account.username.upper(), 'balance': account.balance,\
         'positionsQty': positions, 'sharesQty':shares,'invCost': invCost,\
         'currentCost':curCost, 'margin':curCost-invCost, 'marginPrcntg': (curCost-invCost)/invCost*100 } )
+
+@app.route('/api/signup', methods=['POST'])
+def signUp():
+    if not request.json or 'username' not in request.json or 'password' not in request.json:
+        return jsonify(BAD_REQUEST), 400
+    username = request.json["username"]
+    password = request.json["password"]
+    checking = Account.get_name(username)
+    if len(checking) > 0 or len(password) < 6:
+        return jsonify(APP_ERROR), 500
+    new = Account()
+    new.signUp(username, password)
+    new.save()
+    return jsonify({
+        'username': new.username,
+        'api_key': new.api_key
+    })

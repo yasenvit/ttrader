@@ -44,3 +44,5 @@ curl -H "Content-Type: application/json" -X POST -d '{"ticker": "tsla", "amount"
 curl 127.0.0.1:5000/api/get_ten/mostactive
 
 curl 127.0.0.1:5000/api/JA4JOIVIJBK6WPI/summary
+
+curl -H "Content-Type: application/json" -X POST -d '{"username": 'Egle', "password":'mypass'}' http://127.0.0.1:5000/api/signup

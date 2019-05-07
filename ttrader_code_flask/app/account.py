@@ -29,7 +29,16 @@ class Account(ORM):
             return None
         else:
             return account
-        
+
+    
+    def signUp(self,username, password):
+        self.username = username
+        self.password = self.set_password(password)
+        self.balance = 0
+        self.random_generator()
+        self.save()
+
+
     def deposit(self, amount):
         self.balance += amount
         self.save()

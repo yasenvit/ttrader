@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {BrowserRouter, Route} from 'react-router-dom';
+import {Link} from 'react-router-dom'
 import image from './mancity.jpg';
 import './Nav.css';
 import isloggedin from './util/isloggedin';
@@ -23,6 +24,7 @@ import Losers from './components/Losers';
 import Iexvolume from './components/Iexvolume';
 import Iexpercent from './components/Iexpercent';
 import Infocus from './components/Infocus';
+import SignUp from './components/SignUp';
 import apiCall from './util/apiCall';
 
 class App extends Component {
@@ -30,8 +32,11 @@ class App extends Component {
     refresh:"",
     error:""
   }
-  login = (username, password) => {
-    const promise = apiCall('/api/get_api_key', 'post', {
+
+  signup = (username, password) => {
+    console.log("signup")
+    console.log(username)
+    const promise = apiCall('/api/signup', 'post', {
       username: username,
       password: password
     })
@@ -41,7 +46,7 @@ class App extends Component {
         window.sessionStorage.setItem("username", json.username)
         this.setState({
           refresh: "loggedin",
-          error: ""
+          error: "upss...try again"
         })
       }
       else {
@@ -52,15 +57,41 @@ class App extends Component {
       }
     })
   }
+
+  
+  login = (username, password) => {    
+    const promise = apiCall('/api/get_api_key', 'post', {
+      username: username,
+      password: password
+    })
+    promise.then(blob=>blob.json()).then(json=>{
+      if (json.api_key !== undefined) {
+        window.sessionStorage.setItem("apikey", json.api_key)
+        window.sessionStorage.setItem("username", json.username)
+        this.setState({
+          refresh: "loggedin",
+          error: "upss...try again"
+        })
+      }
+      else {
+        this.setState({
+          refresh: "login error",
+          error: "Could not log in"
+        })   
+      }
+    })
+  }
   logoutClick=(event)=>{
     event.preventDefault()
     logout()
     this.setState({refresh: "loggedout"})
   }
   render() {
+    let image = (<img src={image} className="stretch" alt="city" />)
     let routelist=[]
     let LoginLogout=[]
-    let mainroutelist=[]
+    let mainoutput=[]
+    let SignUpBlock=[]
     if (isloggedin()){
       routelist= [
         <Route exact path="/" component={Home}/>,
@@ -78,10 +109,11 @@ class App extends Component {
         <Route exact path="/losers" component={Losers}/>,
         <Route exact path="/iexvolume" component={Iexvolume}/>,
         <Route exact path="/iexpercent" component={Iexpercent}/>,  
-        <Route exact path="/infocus" component={Infocus}/>, 
+        <Route exact path="/infocus" component={Infocus}/>,
+                
         ]
       LoginLogout= [<Route exact path="/" render={(props)=><Logout {...props} clicked={this.logoutClick}/>}/>]        
-      mainroutelist=[
+      mainoutput=[
         <div className="row">
           <div className="columnL">
             <div className="nav">
@@ -98,10 +130,16 @@ class App extends Component {
         </div>]
     } else {
         LoginLogout=[<Route path="/" render={(props)=><Login {...props} loginfunc={this.login} />} />]
-        mainroutelist= [
+        SignUpBlock=[<a style={{color:"white"}}><Link to="/signup"> Sign up </Link></a>]
+        routelist=[          
+          <Route exact path="/signup" render={(props)=><SignUp {...props} signupfunc={this.signup} />}/> 
+        ]
+        mainoutput= [
           <div className="row">
             <div className="column">
-              <img src={image} className="stretch" alt="city" /> 
+            <div className="outp">
+            {routelist}
+            </div>              
             </div>
           </div>
           ]
@@ -110,7 +148,8 @@ class App extends Component {
       <BrowserRouter>
       <div className='box'>
         <div className="row-head">
-          <div className="column">
+          <div className="column" >
+          {SignUpBlock}
           </div>          
           <div className="hello">
               <h5>Welcome to React Terminal trader</h5>
@@ -120,7 +159,7 @@ class App extends Component {
           </div>
         </div>
         <div className="row">
-          {mainroutelist}
+          {mainoutput}
         </div>
       </div>
       </BrowserRouter>
