@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import apiCall from '../util/apiCall';
-import CurrencyFormat from 'react-currency-format';
-import '../Nav.css'
+import '../Style.css';
 
 class Balance extends Component {
     state = {
@@ -27,27 +26,32 @@ class Balance extends Component {
         let output = (<div></div>)
         if(this.state.balance !== null) {
             output = (
-                <div>                
-                <table>
-                <tr>
-                    <td width="10%">Username:</td>
-                    <td width="20%" >{this.state.username}</td>                    
-                </tr>
-                    <td width="10%" >Cash Balance</td>
-                    <td width="20%" ><CurrencyFormat value={roundTo(this.state.balance,2)} displayType={'text'}
-                            thousandSeparator={true} prefix={'$'}/></td>
-                <tr style={{ backgroundColor:'#f4f4f4'}}>
-                    <td width="10%" >Portfolio cost</td>
-                    <td width="20%" ><CurrencyFormat value={roundTo(this.state.positionsCurrentCost,2)} displayType={'text'}
-                     thousandSeparator={true} prefix={'$'}/></td>
-                </tr>
-                <tr>
-                    <td width="10%" >Balance total</td>
-                    <td width="20%" ><CurrencyFormat value={roundTo(this.state.positionsCurrentCost,2) +this.state.balance} displayType={'text'}
-                     thousandSeparator={true} prefix={'$'}/></td>
-                </tr>
-                </table>
-            </div>            
+                <div className="block">
+                    <div className="infobox">
+                        <div className="top">
+                            BALANCE INFO
+                        </div>
+                        <table>
+                            <tr>
+                                <td style={{width:"50%", textAlign:"end", backgroundColor:"white"}}>Username:</td>
+                                <td style={{width:"50%", textAlign:"start", backgroundColor:"white"}}>{this.state.username}</td>                    
+                            </tr>
+                                <td style={{width:"50%", textAlign:"end", backgroundColor:"white"}}>Cash Balance</td>
+                                <td style={{width:"50%", textAlign:"start", backgroundColor:"white"}}><CurrencyFormat value={roundTo(this.state.balance,2)} displayType={'text'}
+                                    thousandSeparator={true} prefix={'$'}/></td>
+                            <tr>
+                                <td style={{width:"50%", textAlign:"end", backgroundColor:"white"}}>Portfolio cost</td>
+                                <td style={{width:"50%", textAlign:"start", backgroundColor:"white"}}><CurrencyFormat value={roundTo(this.state.positionsCurrentCost,2)} displayType={'text'}
+                                    thousandSeparator={true} prefix={'$'}/></td>
+                            </tr>
+                            <tr>
+                                <td style={{width:"50%", textAlign:"end", backgroundColor:"white"}}>Balance total</td>
+                                <td style={{width:"50%", textAlign:"start", backgroundColor:"white"}}><CurrencyFormat value={roundTo(this.state.positionsCurrentCost +this.state.balance,2)} displayType={'text'}
+                                   thousandSeparator={true} prefix={'$'}/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>            
             )
         }
         return (

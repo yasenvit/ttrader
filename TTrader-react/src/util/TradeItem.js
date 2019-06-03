@@ -6,7 +6,7 @@ class TradeItem extends Component {
     render() {
         
        return this.props.trades.map((trade, index)=> (
-            <div><TradeProps key={index} trade={trade} /></div>
+            <TradeProps key={index} trade={trade} />
         ))
         
     }

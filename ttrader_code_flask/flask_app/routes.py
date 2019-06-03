@@ -4,10 +4,10 @@ from app import util, Account
 from requests.exceptions import ConnectionError
 import json
 
-UNATHORIZED = {'error':'unathorized', 'status code':'401'}
-NOT_FOUND = {'error':'not found', 'status code':'404'}
-APP_ERROR = {'error':'application error', 'status code':'500'}
-BAD_REQUEST = {'error':'bad request', 'status code':'400'}
+UNATHORIZED = {'error':'unathorized', 'statuscode':'401'}
+NOT_FOUND = {'error':'not found', 'statuscode':'404'}
+APP_ERROR = {'error':'application error', 'statuscode':'500'}
+BAD_REQUEST = {'error':'bad request', 'statuscode':'400'}
 
 @app.errorhandler(404)
 def error404(e):
@@ -86,9 +86,21 @@ def position_for(api_key,symbol):
     acc = Account.api_authenticate(api_key)
     if not acc:
         return jsonify(UNATHORIZED), 401
+    currentPrice  = util.get_price(symbol)
+    if not currentPrice:
+        return  jsonify(NOT_FOUND), 404
     position = acc.get_position_for(symbol.upper())
-    acc.save()
-    return jsonify({'username': acc.username, 'ticker' : position.ticker, 'shares': position.shares })
+    investCost = acc.get_trade_sum(symbol)
+    currentCost = currentPrice * position.shares
+    if investCost == 0:
+        change = 0
+        changePercentage = 0
+    else:
+        change = currentCost - investCost
+        changePercentage = change / investCost * 100
+    return jsonify({'username': acc.username, 'balance': acc.balance, 'ticker' : position.ticker, 'shares': position.shares,\
+        'currentPrice': currentPrice, 'positionValue': currentCost, 'investCost': investCost,\
+            'change': change, 'changePercentage': changePercentage})
 
 @app.route('/api/<api_key>/trades')
 def trades(api_key):
@@ -96,7 +108,8 @@ def trades(api_key):
     if not acc:
         return jsonify(UNATHORIZED), 401
     trades = acc.get_trades()
-    json_list = [{"ticker":trade.ticker, "shares": trade.volume, "price":trade.price, "time":trade.time} for trade in trades]
+    json_list = [{"ticker":trade.ticker, "shares": trade.volume, "price":trade.price,\
+        "tradeCost": trade.volume * trade.price, "time":trade.time} for trade in trades]
     return jsonify({"username":acc.username, 'trades': json_list})
 
 @app.route('/api/<api_key>/trades_for/<symbol>')
@@ -105,7 +118,8 @@ def trades_for(api_key, symbol):
     if not acc:
         return jsonify(UNATHORIZED), 401
     trades = acc.get_trades_for(symbol.upper())
-    json_list = [{"ticker":trade.ticker, "shares": trade.volume, "price":trade.price, "time":trade.time} for trade in trades]
+    json_list = [{"ticker":trade.ticker, "shares": trade.volume, "price":trade.price, \
+        "tradeCost": trade.volume * trade.price,"time":trade.time} for trade in trades]
     return jsonify({"username":acc.username, 'trades': json_list})
 
 @app.route('/api/<api_key>/buy', methods = ['POST'])
@@ -115,17 +129,16 @@ def buy(api_key):
     acc = Account.api_authenticate(api_key)
     if not acc:
         return jsonify(UNATHORIZED), 401
-    ticker = request.json["ticker"]
+    rawticker = request.json["ticker"]
     amount = int(request.json["amount"])
-    if amount < 0:
+    price = util.get_price(rawticker)
+    if not price or amount < 0 or amount*price > acc.balance:
         return jsonify(BAD_REQUEST), 400
-    try:
-        acc.buy(ticker, int(amount))
-    except ValueError:
-        return  jsonify(BAD_REQUEST), 404
+    ticker = rawticker
+    acc.buy(ticker, int(amount))
     position = acc.get_position_for(ticker)
     return jsonify({"username" : acc.username, "balance" : acc.balance, "ticker" : position.ticker,"shares":position.shares,\
-         "positionCost": position.shares*util.get_price(ticker)})
+         "positionValue": position.shares*util.get_price(ticker)})
 
 
 @app.route('/api/<api_key>/sell', methods = ['POST'])
@@ -135,15 +148,17 @@ def sell(api_key):
     acc = Account.api_authenticate(api_key)
     if not acc:
         return jsonify(UNATHORIZED), 401
-    ticker = request.json["ticker"]
+    rawticker = request.json["ticker"]
     amount = int(request.json["amount"])
-    position = acc.get_position_for(ticker)
-    if amount < 0 or amount > position.shares:
+    position = acc.get_position_for(rawticker)
+    price = util.get_price(rawticker)
+    if not price or amount < 0 or amount > position.shares:
         return jsonify(BAD_REQUEST), 400
+    ticker = rawticker
     acc.sell(ticker, amount)
     position = acc.get_position_for(ticker)
     return jsonify({"username" : acc.username, "balance" : acc.balance,"ticker" : position.ticker,"shares":position.shares,\
-         "positionCost" : position.shares*util.get_price(ticker)})
+         "positionValue" : position.shares*util.get_price(ticker)})
     
 @app.route('/api/get_ten/<criteria>')
 def get_ten(criteria):
@@ -158,9 +173,8 @@ def get_ten(criteria):
 
 @app.route('/api/get_api_key', methods=['POST'])
 def get_api_key():
-    
     if not request.json or 'username' not in request.json or\
-         'password' not in request.json:
+        'password' not in request.json:
         return jsonify(BAD_REQUEST), 400
     account = Account.login(request.json['username'], request.json['password'])
     if not account:
@@ -177,17 +191,17 @@ def summary(api_key):
         return jsonify(UNATHORIZED), 401
     results = account.summary()
     curCost = 0
-    invCost = 0
+    investCost = 0
     positions = 0
     shares = 0
     for pos in results:
         curCost += pos['currentCost']
-        invCost += pos['investCost']
+        investCost += pos['investCost']
         positions += 1
         shares += pos['shares'] 
     return jsonify({'positions':results, 'username': account.username.upper(), 'balance': account.balance,\
-        'positionsQty': positions, 'sharesQty':shares,'invCost': invCost,\
-        'currentCost':curCost, 'margin':curCost-invCost, 'marginPrcntg': (curCost-invCost)/invCost*100 } )
+        'positionsQty': positions, 'sharesQty':shares,'investCost': investCost,\
+        'currentCost':curCost, 'margin':curCost-investCost, 'marginPrcntg': (curCost-investCost)/investCost*100 } )
 
 @app.route('/api/signup', methods=['POST'])
 def signUp():
@@ -205,3 +219,15 @@ def signUp():
         'username': new.username,
         'api_key': new.api_key
     })
+
+@app.route('/api/company/<symbol>')
+def company_info(symbol):
+    try:
+        price  = util.get_price(symbol)
+        info  = util.company_info(symbol)
+    except ConnectionError:
+        return  jsonify(NOT_FOUND), 404
+    return jsonify({"ticker": info["symbol"], "price": price, "companyName": info["companyName"],\
+         "sector": info["sector"], "industry": info["industry"],"exchange": info["exchange"],\
+              "description": info["description"], "CEO": info["CEO"]})
+    

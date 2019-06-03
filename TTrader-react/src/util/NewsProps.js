@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import apiCall from './apiCall';
+import '../Style.css';
 
 
 class NewsProps extends Component {
@@ -7,19 +7,19 @@ class NewsProps extends Component {
     render() {        
        return (
         <div style={itemStyle}>
-            <ul>
-                <li><h4>Headline: {this.props.item.headline}</h4></li>
-                <li><p>Date:{this.props.item.datetime}</p></li>
-                <li><p>{this.props.item.summary}</p></li>
-            </ul>
+            <p>Date:{this.props.item.datetime}</p>
+            Source URL: <a href={this.props.item.url} target="_blank" rel="noopener noreferrer" style={{color:"blue"}}>{this.props.item.url}</a>
+            <h4>Headline: {this.props.item.headline}</h4>
+            <p>{this.props.item.summary}</p>
         </div>
             )
     }
 }
 const itemStyle = {
-    backgroundColor: '#f4f4f4',
+    backgroundColor: 'white',
     padding: '10px',
-    borderBottom: '1px #ccc dotted'
+    borderBottom: '1px #ccc dotted',
+    textAlign:'start'
 
 }
 export default NewsProps

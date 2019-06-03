@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import apiCall from '../util/apiCall';
 import NewsItem from '../util/NewsItem';
-import '../Nav.css'
+import CurrencyFormat from 'react-currency-format';
+import '../Style.css';
 
 class TickerLookup extends Component {
     state = {
@@ -14,15 +15,24 @@ class TickerLookup extends Component {
         volume: null,
         change: null,
         changePercent: null,
-        date: null                   
+        date: null,
+        news: null,
+        exchange: null                   
     }
-    getPrice(ticker) {
-        const endpoint = `/api/price/${ticker}`
-        const promise = apiCall(endpoint)
+    
+    getInfo(ticker) {
+        const endpoint = `/api/company/${ticker}`
+        const promise = apiCall(endpoint,"get")
         promise.then(blob=>blob.json()).then (json=> {
-            this.setState ({
-                price: json.price,
-                ticker: json.ticker
+            this.setState ({ 
+                ticker: json.ticker,
+                price: json.price, 
+                companyName: json.companyName,
+                sector: json.sector,
+                industry: json.industry,
+                ceo: json.CEO,
+                description: json.description,
+                exchange: json.exchange
             })
         })
     }
@@ -52,72 +62,128 @@ class TickerLookup extends Component {
               })
     }
     render() {
+        console.log(this.state.price)
         const roundTo = require('round-to')
-        let showPrice = (<div></div>)
-        let recentActivity = (<div></div>)        
-        if (this.state.price !== null) {
-            showPrice = (
-                <div>
-                    <div>
-                        <ul>
-                            <li type='circle' >Current price for ticker '{this.state.ticker}' is ${this.state.price} per share</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <button className="myButton" onClick = {(event)=> {
-                            this.getRecent(document.getElementById('ticker').value)
-                        }}
-                        > show latest activity</button>
-                    </div>
-                </div>
-            )
+        let info = (<div></div>)
+        let activity = (<div></div>)
         let news = (<div></div>)
+
         if (this.state.news !== null) {
             news = (
                 <div>
-                    <h4>Related News</h4>
+                    <div className="top">
+                        RELATED NEWS
+                    </div>
                     <NewsItem items = {this.state.news}/>
                 </div>
             )
-        }
+        }  
+
         if (this.state.change !== null) {
-            recentActivity = (                                  
-                    <div >
-                        <ul>
-                            <li>Ticker: {this.state.ticker}</li>
-                            <li>Date:   {this.state.date}</li>
-                            <li>Volume: {this.state.volume}</li>
-                            <li>Price (open): ${this.state.open} / Price (close): ${this.state.close}</li>
-                            <li>Lowest Price: ${this.state.low} / Highest Price: ${this.state.high}</li>
-                            <li>Price change: ${roundTo(this.state.change,2)} / Price change : {roundTo(this.state.changePercent,2)}%</li>
-                        </ul>
-                        {news}
+            info = (
+            <div>
+                <table>
+                    <tr>                        
+                        <th width="30%">Ticker</th>
+                        <td width="30%">{this.state.ticker}</td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Company Name</th>
+                        <td width="60%" >{this.state.companyName}</td>
+                    </tr>
+                    <tr>
+                        <th width="30%">CEO</th>
+                        <td width="60%" >{this.state.ceo}</td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Sector</th>
+                        <td width="60%" >{this.state.sector}</td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Industry</th>
+                        <td width="60%" >{this.state.industry}</td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Description</th>
+                        <td width="60%" >{this.state.description}</td>
+                    </tr>
+                </table>
+            </div>
+            )
+            activity =(
+                <div>
+                    <div className="top">
+                            LATEST ACTIVITY
                     </div>
-                )
-            }
+                    <table>
+                        <tr>                        
+                            <th width="30%">Exchange</th>
+                            <td width="60%">{this.state.exchange}</td>
+                        </tr>
+                        <tr>                        
+                            <th width="30%">Price</th>
+                            <td width="60%">{this.state.price}</td>
+                        </tr>
+                        <tr>                        
+                            <th width="30%">Volume</th>
+                            <td width="60%">{this.state.volume}</td>
+                        </tr>
+                        <tr>                        
+                            <th width="30%">Price (open)</th>
+                            <td width="60%"><CurrencyFormat value={this.state.open} displayType={'text'}
+                            thousandSeparator={true} prefix={'$'}/></td>
+                        </tr>
+                        <tr>                        
+                            <th width="30%">Price (close)</th>
+                            <td width="60%"><CurrencyFormat value={this.state.close} displayType={'text'}
+                            thousandSeparator={true} prefix={'$'}/></td>
+                        </tr>
+                        <tr>                        
+                            <th width="30%">Lowest price</th>
+                            <td width="60%"><CurrencyFormat value={this.state.low} displayType={'text'}
+                            thousandSeparator={true} prefix={'$'}/></td>
+                        </tr>
+                        <tr>                        
+                            <th width="30%">Highest price</th>
+                            <td width="60%"><CurrencyFormat value={this.state.high} displayType={'text'}
+                            thousandSeparator={true} prefix={'$'}/></td>
+                        </tr>
+                        <tr>                        
+                            <th width="30%">Price change</th>
+                            <td width="60%"><CurrencyFormat value={roundTo(this.state.change,2)} displayType={'text'}
+                            thousandSeparator={true} prefix={'$'}/></td>
+                        </tr>
+                        <tr>                        
+                            <th width="30%">Price change</th>
+                            <td width="60%"><CurrencyFormat value={roundTo(this.state.changePercent,2)} displayType={'text'}
+                            thousandSeparator={true} prefix={'%'}/></td>
+                        </tr>
+                    </table>
+                </div>
+            )
         }
         return (
-            <div>
-                <div>
-                    <h3>Stock info</h3>
-                    <input className="input" id="ticker" placeholder="ticker"/>
-                    <button className="myButton" onClick = {(event)=> {
-                        this.getPrice(document.getElementById('ticker').value)
-                        this.getNews(document.getElementById('ticker').value)
-                    }}
-                    > show </button>
+            <div className="block">
+                <div className="infobox">
+                    <div className="top">
+                        STOCK INFO
+                    </div>
+                    <div className="request">
+                        <input className="input" id="ticker" placeholder="ticker"/>
+                        <button className="myButton" onClick = {(event)=> {
+                            this.getInfo(document.getElementById('ticker').value)
+                            this.getRecent(document.getElementById('ticker').value)
+                            this.getNews(document.getElementById('ticker').value)
+                        }}
+                        > show </button>
+                    </div>
+                    <div>
+                        {info}
+                        {activity}
+                        {news}
+                    </div>
                 </div>
-                <div>
-                    
-                    {showPrice}
-
-                </div>
-                <div>
-                    
-                    {recentActivity}
-                    
-                </div>                    
-            </div>
+            </div>                    
         )
     }
 }

@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import apiCall from '../util/apiCall';
 import TradeItem from '../util/TradeItem';
+import '../Style.css';
 
 class Trades extends Component {
     state={
-        trades: null,
+        trades: [],
         error: "ERROR"
     }
     getTrades () {
@@ -18,26 +19,36 @@ class Trades extends Component {
     } 
         render() {
         let tradesList = (<div></div>)  
-        if (this.state.trades !==null) {
+        if (this.state.trades.length !== 0) {
             tradesList = (
-                <div>
-                    <TradeItem trades={this.state.trades}/>
+                <div className="block">
+                    <div className="infobox">
+                        <div className="top">
+                            TRADES HISTORY
+                        </div>
+                        <table>
+                            <tr style={{backgroundColor:"#cac1c1"}}>
+                                <th width="15%">Date and time</th>
+                                <th width="20%">Ticker</th>
+                                <th width="20%">Shares</th>
+                                <th width="20%">Price</th>
+                                <th width="20%">Transaction cost</th>
+                            </tr>
+                            <TradeItem trades={this.state.trades}/>
+                        </table>
+                    </div>
                 </div>
+                
             )
         }  
         return (
             <div>
-                <h3 className="title ">Trades History </h3>
-                <div>
-
-                    {tradesList}
-
-                </div>
+                {tradesList}
             </div>
         )
     }
     componentDidMount() {        
-        if(this.state.trades === null){
+        if(this.state.trades.length === 0){
             this.getTrades()
         }
     }

@@ -19,7 +19,7 @@ def get_price(symbol):
     if response.status_code == 200:
         return response.json()
     else:
-        raise requests.ConnectionError('http status: ' + format(response.status_code))
+        return None
 
 def get_ten_stocks(criteria):
     criterialist = ["/stock/market/list/mostactive","/stock/market/list/gainers","/stock/market/list/losers","/stock/market/list/iexvolume","/stock/market/list/iexpercent","/stock/market/list/infocus"]
@@ -38,6 +38,13 @@ def stock_info(symbol):
 
 def stock_news(symbol):
     response = requests.get(ENDPOINT + "/stock/{}/news/last/5".format(symbol))
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None
+
+def company_info(symbol):
+    response = requests.get(ENDPOINT + "/stock/{}/company".format(symbol))
     if response.status_code == 200:
         return response.json()
     else:

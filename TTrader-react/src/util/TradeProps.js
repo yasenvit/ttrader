@@ -1,26 +1,25 @@
 import React, {Component} from 'react';
 import CurrencyFormat from 'react-currency-format';
-import '../Nav.css'
+import {Link} from 'react-router-dom';
+import '../Style.css';
 
 class TradeProps extends Component {    
     render() {
+        const roundTo = require('round-to')
+        const linkTradesFor = `/tradesfor/${this.props.trade.ticker}`
+        
         return (
-            <table className="table">
-                <tr>
-                    <th width="14%">Date and time</th>
-                    <th width="7%">Ticker</th>
-                    <th width="10%">Shares</th>
-                    <th width="14%">Price</th>
-                </tr>
-                <tr>
-                    <td width="7%" >{this.props.trade.time}</td>
-                    <td width="7%" >{this.props.trade.ticker}</td>
-                    <td width="10%" >{this.props.trade.shares}</td>
-                    <td width="14%"><CurrencyFormat value={this.props.trade.price} displayType={'text'}
-                     thousandSeparator={true} prefix={'$'}/></td>
-                </tr>
-            </table>
-            )
+            
+            <tr>
+                <td width="15%" >{this.props.trade.time}</td>
+                <td><Link style={{color:"blue"}} to={linkTradesFor}>{this.props.trade.ticker}</Link></td>
+                <td width="20%" >{this.props.trade.shares}</td>
+                <td width="20%"><CurrencyFormat value={this.props.trade.price} displayType={'text'}
+                thousandSeparator={true} prefix={'$'}/></td>
+                <td width="20%"><CurrencyFormat value={roundTo(this.props.trade.tradeCost,2)} displayType={'text'}
+                thousandSeparator={true} prefix={'$'}/></td>
+            </tr>
+        )
     }
 }
 export default TradeProps

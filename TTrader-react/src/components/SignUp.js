@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import apiCall from '../util/apiCall';
+import '../Style.css';
 
 class SignUp extends Component {
     
     render() {
         
         return (
-            <div>
+            <div className="signup">
                 <p>Welcome to place where you can make money!</p>
                 <h4>Sign up here</h4>
                 <p></p>

@@ -65,10 +65,7 @@ class Account(ORM):
 
     def buy(self, ticker, amount):
         price = get_price(ticker.upper())
-        if self.balance < price * amount:
-            raise ValueError
         self.balance -= price * amount
-
         trade = Trade()
         trade.account_pk = self.pk
         trade.ticker = ticker.upper()
@@ -84,14 +81,6 @@ class Account(ORM):
         self.save()
         trade.save()
             
-    def check_position(self, ticker):
-        where = "WHERE account_pk = ? AND ticker = ?"
-        values = (self.pk, ticker.upper())
-        result = Position.select_one(where, values)
-        if result:
-            return result
-        return None
-
     def sell(self, ticker, amount):
         row = self.get_position_for(ticker.upper())
         result = row.shares
@@ -118,6 +107,14 @@ class Account(ORM):
             position.shares -= amount
             position.save()
 
+    def check_position(self, ticker):
+        where = "WHERE account_pk = ? AND ticker = ?"
+        values = (self.pk, ticker.upper())
+        result = Position.select_one(where, values)
+        if result:
+            return result
+        return None
+
     def get_trades(self):
         """ return a list of all Trades for this user """
         where = "WHERE account_pk = ?"
@@ -130,19 +127,19 @@ class Account(ORM):
         values = (self.pk, ticker.upper())
         return Trade.select_many(where, values)
     
-    @classmethod
-    def get_name(cls, newname):
-        where = "WHERE username=?"
-        values = (newname,)
-        return cls.select_many(where, values)
-
     def get_trade_sum(self,ticker):
         tradelist = self.get_trades_for(ticker.upper())
         _sum = 0
         for trade in tradelist:
             _sum = _sum + trade.volume * trade.price
         return _sum
-    
+
+    @classmethod
+    def get_name(cls, newname):
+        where = "WHERE username=?"
+        values = (newname,)
+        return cls.select_many(where, values)
+   
     def get_api_key(self):
         where = "WHERE pk=?"
         values = (self.pk,)

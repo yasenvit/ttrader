@@ -12,6 +12,8 @@ To start React:
 
 installation: npx create-react-app name_of_app
 To run: npm start
+npm install react-router react-router-dom;
+npm install apexcharts react-apexcharts;
 
 
 Curl Command:

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import apiCall from '../util/apiCall';
 import CurrencyFormat from 'react-currency-format';
-import '../Nav.css'
+import '../Style.css';
 
 class Home extends Component {
     state = {
@@ -34,38 +34,38 @@ class Home extends Component {
         let userOutput = (<div></div>)
         if (this.state.username !== null) {
             userOutput = (
-                <div>
+                <div className="block">
                     <table>
                         <tr>
-                            <td colspan="2">Welcome {this.state.username}</td> 
+                            <td colspan="2">Hello {this.state.username}</td> 
                         </tr>
                         <tr>
-                            <td width="10%" >Balance total</td>
-                            <td width="20%" ><CurrencyFormat value={roundTo(this.state.currentCost,2) +this.state.balance} displayType={'text'}
+                            <th style={{width:"50%", textAlign:"end", backgroundColor:"white"}}>Balance total: </th>
+                            <td style={{width:"50%", textAlign:"start", backgroundColor:"white"}}><CurrencyFormat value={roundTo(this.state.currentCost,2) +this.state.balance} displayType={'text'}
                             thousandSeparator={true} prefix={'$'}/></td>
                         </tr>
-                        <tr style={{ backgroundColor:'#f4f4f4'}}>
-                            <td width="10%" >Account cash balance</td>
-                            <td width="20%" ><CurrencyFormat value={roundTo(this.state.balance,2)} displayType={'text'}
+                        <tr>
+                            <th style={{width:"50%", textAlign:"end", backgroundColor:"white"}}>Account cash balance: </th>
+                            <td style={{width:"50%", textAlign:"start", backgroundColor:"white"}}><CurrencyFormat value={roundTo(this.state.balance,2)} displayType={'text'}
                                     thousandSeparator={true} prefix={'$'}/></td>
                         </tr>                            
-                        <tr style={{ backgroundColor:'#f4f4f4'}}>
-                            <td width="10%" >Portfolio cost</td>
-                            <td width="20%" ><CurrencyFormat value={roundTo(this.state.currentCost,2)} displayType={'text'}
+                        <tr>
+                            <th style={{width:"50%", textAlign:"end", backgroundColor:"white"}}>Portfolio cost: </th>
+                            <td style={{width:"50%", textAlign:"start", backgroundColor:"white"}}><CurrencyFormat value={roundTo(this.state.currentCost,2)} displayType={'text'}
                             thousandSeparator={true} prefix={'$'}/></td>
                         </tr>
-                        <tr style={{ backgroundColor:'#f4f4f4'}}>
-                            <td width="10%" >Portfolio change %</td>
-                            <td width="20%" ><CurrencyFormat value={roundTo(this.state.marginPercentage,2)} displayType={'text'}
+                        <tr>
+                            <th style={{width:"50%", textAlign:"end", backgroundColor:"white"}}>Portfolio change %:</th>
+                            <td style={{width:"50%", textAlign:"start", backgroundColor:"white"}}><CurrencyFormat value={roundTo(this.state.marginPercentage,2)} displayType={'text'}
                             thousandSeparator={true} prefix={'%'}/></td>
                         </tr>
-                        <tr style={{ backgroundColor:'#f4f4f4'}}>
-                            <td width="10%" >Positions</td>
-                            <td width="20%" >{this.state.positionsQty}</td>
+                        <tr>
+                            <th style={{width:"50%", textAlign:"end", backgroundColor:"white"}}>Positions: </th>
+                            <td style={{width:"50%", textAlign:"start", backgroundColor:"white"}}>{this.state.positionsQty}</td>
                         </tr>
-                        <tr style={{ backgroundColor:'#f4f4f4'}}>
-                            <td width="10%" >Shares</td>
-                            <td width="20%" >{this.state.sharesQty}</td>
+                        <tr>
+                            <th style={{width:"50%", textAlign:"end", backgroundColor:"white"}}>Shares: </th>
+                            <td style={{width:"50%", textAlign:"start", backgroundColor:"white"}}>{this.state.sharesQty}</td>
                         </tr>
                     </table>
                 </div>               
@@ -73,9 +73,7 @@ class Home extends Component {
         }
         return (
             <div>
-                
-                <h3>{userOutput}</h3>
-                                
+                {userOutput}                             
             </div>
         )
     }

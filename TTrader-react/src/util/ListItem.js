@@ -7,7 +7,7 @@ class ListItem extends Component {
     render() {
         
        return this.props.items.map((item, index)=> (
-            <div><ItemProps key={index} item={item} /></div>
+            <ItemProps key={index} item={item} />
         ))
         
     }

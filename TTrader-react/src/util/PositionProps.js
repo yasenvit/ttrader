@@ -1,24 +1,23 @@
 import React, {Component} from 'react';
+import '../Style.css';
+import CurrencyFormat from 'react-currency-format';
 
 class PositionProps extends Component {
     
-    render() {        
-       return (
-        <table className="table">
+    render() { 
+        const roundTo = require('round-to')       
+        return (
             <tr>
-                <td width="20%" >Ticker:</td>
-                <td width="20%" >{this.props.position.ticker}</td>
-                <td width="20%" >Shares:</td>
-                <td width="20%" >{this.props.position.shares}</td>
+                <td width="15%" >{this.props.position.ticker}</td>
+                <td width="15%" >{this.props.position.shares}</td>
+                <td width="20%" ><CurrencyFormat value={roundTo(this.props.position.investCost,2)}displayType={'text'}
+                            thousandSeparator={true} prefix={'$'}/></td>
+                <td width="20%" ><CurrencyFormat value={roundTo(this.props.position.currentCost,2)}displayType={'text'}
+                            thousandSeparator={true} prefix={'$'}/></td>
+                <td width="20%" ><CurrencyFormat value={roundTo(this.props.position.marginPercentage,2)}displayType={'text'}
+                thousandSeparator={true} prefix={'%'}/></td>
             </tr>
-        </table>
-            )
+        )
     } 
-}
-const itemStyle = {
-    backgroundColor: '#f4f4f4',
-    padding: '10px',
-    borderBottom: '1px #ccc dotted'
-
 }
 export default PositionProps

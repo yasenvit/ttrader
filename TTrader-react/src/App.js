@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import {BrowserRouter, Route} from 'react-router-dom';
 import {Link} from 'react-router-dom'
-import image from './mancity.jpg';
-import './Nav.css';
+import './Style.css';
 import isloggedin from './util/isloggedin';
 import logout from './util/logout';
 import Nav from './components/Nav';
@@ -30,12 +29,11 @@ import apiCall from './util/apiCall';
 class App extends Component {
   state={
     refresh:"",
-    error:""
+    error:"",
+    username:null
   }
 
   signup = (username, password) => {
-    console.log("signup")
-    console.log(username)
     const promise = apiCall('/api/signup', 'post', {
       username: username,
       password: password
@@ -45,20 +43,19 @@ class App extends Component {
         window.sessionStorage.setItem("apikey", json.api_key)
         window.sessionStorage.setItem("username", json.username)
         this.setState({
+
           refresh: "loggedin",
-          error: "upss...try again"
+          error: ""
         })
       }
       else {
         this.setState({
           refresh: "login error",
           error: "Could not log in"
-        })  
+        })
       }
     })
-  }
-
-  
+  }  
   login = (username, password) => {    
     const promise = apiCall('/api/get_api_key', 'post', {
       username: username,
@@ -70,7 +67,8 @@ class App extends Component {
         window.sessionStorage.setItem("username", json.username)
         this.setState({
           refresh: "loggedin",
-          error: "upss...try again"
+          error: "",
+          username: json.username
         })
       }
       else {
@@ -87,7 +85,8 @@ class App extends Component {
     this.setState({refresh: "loggedout"})
   }
   render() {
-    let image = (<img src={image} className="stretch" alt="city" />)
+    
+    let home = []
     let routelist=[]
     let LoginLogout=[]
     let mainoutput=[]
@@ -98,70 +97,108 @@ class App extends Component {
         <Route exact path="/balance" component={Balance}/>,
         <Route exact path="/deposit" component={Deposit}/>,
         <Route exact path="/trades" component={Trades}/>,
-        <Route exact path="/trades_for" component={TradesFor}/>,
+        <Route exact path="/tradesfor" component={TradesFor}/>,
+        <Route exact path="/tradesfor/:ticker" component={TradesFor}/>,
         <Route exact path="/buy" component={Buy}/>,
+        <Route exact path="/buy/:ticker" component={Buy}/>,
         <Route exact path="/sell" component={Sell}/>,
+        <Route exact path="/sell/:ticker" component={Sell}/>,
         <Route exact path="/positions" component={Positions}/>,
-        <Route exact path="/position_for" component={PositionFor}/>,
+        <Route exact path="/positionfor" component={PositionFor}/>,
         <Route exact path="/stock" component={TickerLookup}/>,
         <Route exact path="/mostactive" component={Mostactive}/>, 
-        <Route exact path="/gainers" component={Gainers}/>, 
+        <Route exact path="/gainers" component={Gainers}/>,
         <Route exact path="/losers" component={Losers}/>,
         <Route exact path="/iexvolume" component={Iexvolume}/>,
         <Route exact path="/iexpercent" component={Iexpercent}/>,  
         <Route exact path="/infocus" component={Infocus}/>,
                 
         ]
-      LoginLogout= [<Route exact path="/" render={(props)=><Logout {...props} clicked={this.logoutClick}/>}/>]        
+      LoginLogout= [<Logout clicked={this.logoutClick}/>]        
+      home = [<Link to="/" >HOME</Link>]
       mainoutput=[
-        <div className="row">
-          <div className="columnL">
-            <div className="nav">
+        <div className="body">
+              <div id="left" className="column-left-signed">
+              <div className="top-left">
+                  
+                    {home}
+                 
+              </div>
+              
+              <div className="bottom-left">
               <Nav/>
-            </div>
-            <div className="nav">
-            </div>
+              </div>
           </div>
-          <div className="columnR">
-            <div className="outp">
-            {routelist}
-            </div>            
-          </div>   
-        </div>]
+          <div id="right" className="column-right-signed">
+              <div className="top-right">
+                  <div className="top-spot">
+                      
+                  </div>
+                  <div className="top-spot">
+                    Terminal Trader
+                  </div>
+                  <div className="top-spot">
+                    <div className="spot-elem">
+                      {LoginLogout}
+                    </div>
+                    <div className="spot-elem">
+                      username: {window.sessionStorage.getItem("username")}
+                    </div>
+                  </div>
+              </div>
+              <div className="bottom-right-signed">
+              {routelist}
+              </div>
+          </div>
+        </div>
+      ]
     } else {
-        LoginLogout=[<Route path="/" render={(props)=><Login {...props} loginfunc={this.login} />} />]
-        SignUpBlock=[<a style={{color:"white"}}><Link to="/signup"> Sign up </Link></a>]
-        routelist=[          
-          <Route exact path="/signup" render={(props)=><SignUp {...props} signupfunc={this.signup} />}/> 
-        ]
-        mainoutput= [
-          <div className="row">
-            <div className="column">
-            <div className="outp">
-            {routelist}
-            </div>              
+        LoginLogout=[<Link to="/login" >SIGN IN</Link>]
+        SignUpBlock=[<Link to="/signup" >SIGN UP</Link>]
+        home = [<Link to="/" >TERMINAL TRADER</Link>]
+        routelist=[
+              <Route exact path="/signup" render={(props)=><SignUp {...props} signupfunc={this.signup} />}/>,
+              <Route path="/login" render={(props)=><Login {...props} loginfunc={this.login} />} />         
+             ]
+        mainoutput= [ 
+        <div className="body">
+          <div id="left" className="column-left">
+            <div className="top-left">
+                <div></div>
+            </div>          
+            <div className="bottom-left">
             </div>
           </div>
-          ]
+          <div id="right" className="column-right">
+            <div className="top-right">
+              <div className="top-spot">
+              </div>
+              <div className="top-spot">
+                {home}
+              </div>
+              <div className="top-spot">
+                <div className="spot-elem">
+                  {LoginLogout}
+                </div>
+                <div className="spot-elem">
+                  {SignUpBlock}
+                </div>
+              </div>
+            </div>
+            <div className="bottom-right">
+              {routelist}
+            </div>
+          </div>
+        </div>         
+            ]
       }
     return (
       <BrowserRouter>
-      <div className='box'>
-        <div className="row-head">
-          <div className="column" >
-          {SignUpBlock}
-          </div>          
-          <div className="hello">
-              <h5>Welcome to React Terminal trader</h5>
-          </div>
-          <div className="column">
-           {LoginLogout}
-          </div>
+        <div className="box">
+        {mainoutput}
         </div>
-        <div className="row">
-          {mainoutput}
-        </div>
-      </div>
+            
+        
       </BrowserRouter>
     );
   }
